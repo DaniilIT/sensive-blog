@@ -10,6 +10,33 @@ class PostQuerySet(models.QuerySet):
         posts_at_year = self.filter(published_at__year=year).order_by('published_at')
         return posts_at_year
 
+    def popular(self):
+        popular_posts = self.annotate(likes_count=Count('likes')) \
+                            .order_by('-likes_count')
+        return popular_posts
+
+    def fetch_with_comments_count(self):
+        """ Функция возвращает список постов, для которых подсчитано количество комментариев.
+        Эту функцию стоит использовать в комбинации с отдельным `annotate`, например:
+        Вместо:
+        `.annotate(
+            likes_count=Count('likes', distinct=True),
+            comments_count=Count('comments', distinct=True)
+        )`
+        Использовать:
+        `.annotate(likes_count=Count('likes').fetch_with_comments_count()`
+        ,чтобы снизить нагрузку на БД.
+        """
+        posts_ids = [post.id for post in self]
+
+        posts_with_comments = Post.objects.filter(id__in=posts_ids) \
+                                  .annotate(comments_count=Count('comments'))
+        count_for_id = dict(posts_with_comments.values_list('id', 'comments_count'))
+
+        for post in self:
+            post.comments_count = count_for_id[post.id]
+        return self
+
 
 class TagQuerySet(models.QuerySet):
 
