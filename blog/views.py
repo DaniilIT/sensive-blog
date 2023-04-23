@@ -57,8 +57,7 @@ def post_detail(request, slug):
     post = get_object_or_404(
         Post.objects.annotate(likes_count=Count('likes')) \
             .prefetch_related('author') \
-            .prefetch_related_with_tags() \
-            .all(),
+            .prefetch_related_with_tags(),
         slug=slug
     )
 
@@ -103,7 +102,7 @@ def post_detail(request, slug):
 
 def tag_filter(request, tag_title):
     tag = get_object_or_404(
-        Tag.objects.annotate(related_posts_count=Count('posts')).all(),
+        Tag.objects.annotate(related_posts_count=Count('posts')),
         title=tag_title
     )
 
