@@ -2,7 +2,12 @@ from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 
 from blog.models import Comment, Post, Tag
-from sensive_blog.settings import POPULAR_POSTS_PER_PAGE, FRESH_POSTS_PER_PAGE, TAGS_PER_PAGE, POSTS_BY_TAG_PER_PAGE
+
+
+POPULAR_POSTS_PER_PAGE = 5
+FRESH_POSTS_PER_PAGE = 5
+TAGS_PER_PAGE = 5
+POSTS_BY_TAG_PER_PAGE = 20
 
 
 def serialize_post(post):
