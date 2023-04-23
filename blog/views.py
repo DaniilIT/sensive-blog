@@ -54,8 +54,6 @@ def index(request):
 
 
 def post_detail(request, slug):
-    # .annotate(comments_count=Count('comments', distinct=True))
-
     post = get_object_or_404(
         Post.objects.annotate(likes_count=Count('likes')) \
             .prefetch_related('author') \
